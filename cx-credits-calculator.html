@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="light dark" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-vVgHjr+niMg9Dmo8qV3E9fkMqjo+OEO3qkJtEaNbVrk=' 'sha256-OuuBLPyXjfgHEdCgFf/j7ryBsYKCJikKHC1EjPPYbmQ=' 'sha256-jomU2qkQJWND66Bh5lRm2he6/bXIIU5A/S/sSGfn41o=' 'sha256-azuJWP8T89VH+y/DsrgaRGZ7GczPbtQbQBGT9VBYYzg='; script-src-attr 'none'; style-src 'unsafe-inline'; style-src-elem 'sha256-z/muZYvPom1F57wwC673ljHd9Hk1yadXeEzZpV0ehJ8='; style-src-attr 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-vVgHjr+niMg9Dmo8qV3E9fkMqjo+OEO3qkJtEaNbVrk=' 'sha256-OuuBLPyXjfgHEdCgFf/j7ryBsYKCJikKHC1EjPPYbmQ=' 'sha256-jomU2qkQJWND66Bh5lRm2he6/bXIIU5A/S/sSGfn41o=' 'sha256-nuKYNoY7TF7M68V84Eu3gQjRhOqz7vAEXoswOOZ1FEs='; script-src-attr 'none'; style-src 'unsafe-inline'; style-src-elem 'sha256-OP7vNoipi2Kg/LWNe0IRRFsmeCuJZTrbXlGJZpZWZiw='; style-src-attr 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
 <meta name="generator" content="CxMissionZero MZ-01.01.08" />
 <title>Cx Credits Calculator</title>
 <style>
@@ -3295,6 +3295,79 @@ button.calc-remove { min-height: 0; padding: 4px 8px; color: var(--danger); }
 .calc-fh-out { font-size: 12.5px; }
 .calc-fh-foot { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 10px; font-size: 13px; color: var(--muted); }
 @media (max-width: 720px) { .calc-fh { grid-template-columns: 1fr; } .calc-fh-side { justify-items: start; text-align: left; } }
+/* The read panel, on the right while Checkmarx One is read: a fast thing runs the read's track, the totals climb,
+   and each project slides in as it is read. The page beside it fills in meanwhile (room is made for it on wide screens). */
+.calc-readfx { position: fixed; inset-inline-end: 20px; top: 96px; z-index: 40; width: 320px; max-height: calc(100vh - 120px); overflow: auto; display: grid; gap: 12px; padding: 16px 16px 14px; border: 1.5px solid var(--border-strong); border-radius: 18px; background: var(--surface); box-shadow: 0 18px 50px rgb(15 23 42 / 0.18); animation: readfx-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+.calc-readfx[hidden] { display: none; }
+.calc-readfx::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; border-radius: 18px 18px 0 0; background: linear-gradient(90deg, transparent, var(--accent), #0d9488, transparent); background-size: 200% 100%; animation: readfx-sheen 2.2s linear infinite; }
+.calc-readfx.done::before { background: var(--ok); animation: none; }
+.calc-readfx.failed::before { background: var(--danger); animation: none; }
+.calc-readfx-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.calc-readfx-kick { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 6px; }
+.calc-readfx-kick::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #dc2626; box-shadow: 0 0 0 0 rgb(220 38 38 / 0.5); animation: readfx-live 1.4s ease-out infinite; }
+.calc-readfx.done .calc-readfx-kick::before { background: var(--ok); animation: none; }
+.calc-readfx-head h3 { margin: 2px 0 0; font-size: 18px; line-height: 1.25; }
+.calc-readfx.done h3 { color: var(--ok); }
+.calc-readfx.failed h3 { color: var(--danger); }
+.calc-readfx-track { position: relative; height: 40px; }
+.calc-readfx-track::before { content: ""; position: absolute; inset: auto 0 2px; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 16%, transparent); }
+.calc-readfx-fill { position: absolute; inset-inline-start: 0; bottom: 2px; height: 6px; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent), #0d9488); transition: width 1.2s ease-out; }
+.calc-readfx.done .calc-readfx-fill { background: var(--ok); }
+.calc-readfx-runner.flare-icon { position: absolute; bottom: 7px; inset-inline-start: 0; transition: inset-inline-start 1.2s ease-out; }
+[dir="rtl"] .calc-readfx-runner svg { transform: scaleX(-1); }
+.calc-readfx-pct { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: -4px; }
+.calc-readfx-pct b { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.calc-readfx-pct span { font-size: 12px; color: var(--muted); text-align: end; }
+.calc-readfx-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+.calc-readfx-stats > div { padding: 8px 10px; border-radius: 12px; background: var(--surface-2, color-mix(in srgb, var(--muted) 7%, transparent)); border: 1px solid var(--border); }
+.calc-readfx-stats dt { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.calc-readfx-stats dd { margin: 2px 0 0; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.calc-readfx-bump { animation: readfx-bump 0.7s ease-out; }
+.calc-readfx-sev { display: grid; gap: 5px; }
+.calc-readfx-sev:empty { display: none; }
+.calc-readfx-sevrow { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 8px; font-size: 12px; }
+.calc-readfx-sevname { color: var(--muted); }
+.calc-readfx-bar { height: 7px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 14%, transparent); overflow: hidden; }
+.calc-readfx-bar i { display: block; height: 100%; width: 0; border-radius: inherit; transition: width 0.9s cubic-bezier(0.2, 0.8, 0.3, 1); }
+.calc-readfx-sevrow b { font-variant-numeric: tabular-nums; min-width: 44px; text-align: end; }
+.calc-readfx-feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; min-height: 40px; }
+.calc-readfx-feed li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); animation: readfx-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.25); }
+.calc-readfx-feed li:first-child { border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: color-mix(in srgb, var(--ok) 7%, var(--surface)); }
+.calc-readfx-feed li:nth-child(n + 4) { opacity: 0.75; }
+.calc-readfx-feed li:nth-child(n + 6) { opacity: 0.5; }
+.calc-readfx-feed li:nth-child(n + 8) { opacity: 0.3; }
+.calc-readfx-tick { width: 18px; height: 18px; border-radius: 50%; background: var(--ok); position: relative; }
+.calc-readfx-tick::after { content: ""; position: absolute; left: 6px; top: 3px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.calc-readfx-what { display: grid; min-width: 0; }
+.calc-readfx-what b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calc-readfx-what small { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calc-readfx-n { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.calc-readfx-note { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+.calc-readfx-pill { position: fixed; inset-inline-end: 20px; bottom: 20px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text, inherit); font-size: 13px; font-weight: 600; box-shadow: 0 8px 26px rgb(15 23 42 / 0.16); cursor: pointer; animation: readfx-in 0.3s ease-out; }
+.calc-readfx-pill[hidden] { display: none; }
+.calc-readfx-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: readfx-live 1.4s ease-out infinite; }
+/* Wide screens: the page steps aside for the panel, so nothing is hidden under it. */
+@media (min-width: 1240px) {
+  #page-calculator { transition: padding-inline-end 0.35s ease; }
+  body.calc-readfx-on #page-calculator { padding-inline-end: 344px; }
+}
+@media (max-width: 760px) {
+  .calc-readfx { top: auto; bottom: calc(12px + env(safe-area-inset-bottom)); inset-inline: 12px; width: auto; max-height: 52vh; }
+  .calc-readfx-feed li:nth-child(n + 4) { display: none; }
+}
+.calc-readfx.done .calc-readfx-runner svg { width: 26px; height: 26px; }
+.calc-readfx.done .tick-disc { transform-box: fill-box; transform-origin: center; animation: tick-pop 0.36s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+.calc-readfx.done .tick-mark { stroke-dasharray: 1; stroke-dashoffset: 1; animation: tick-draw 0.3s ease-out 0.2s forwards; }
+@keyframes readfx-in { from { transform: translateX(24px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes readfx-pop { from { transform: translateX(28px) scale(0.96); opacity: 0; } 60% { transform: translateX(-3px); opacity: 1; } to { transform: none; } }
+@keyframes readfx-bump { 0% { color: var(--accent); transform: translateY(-2px); } 100% { color: inherit; transform: none; } }
+@keyframes readfx-live { 0% { box-shadow: 0 0 0 0 rgb(220 38 38 / 0.45); } 100% { box-shadow: 0 0 0 9px rgb(220 38 38 / 0); } }
+@keyframes readfx-sheen { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .calc-readfx.done .tick-mark { stroke-dashoffset: 0; }
+  .calc-readfx, .calc-readfx::before, .calc-readfx-feed li, .calc-readfx .tick-disc, .calc-readfx .tick-mark, .calc-readfx-bump, .calc-readfx-kick::before, .calc-readfx-dot, .calc-readfx-pill { animation: none !important; }
+  .calc-readfx-fill, .calc-readfx-runner.flare-icon, .calc-readfx-bar i, #page-calculator { transition: none !important; }
+}
 /* Git tokens: one line each, the platform, the masked token, the host. */
 .calc-git-token-add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
 .calc-git-tokens { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2, transparent); }
@@ -6544,8 +6617,21 @@ button.gv-sugg:hover:not(:disabled) { border-color: var(--accent); }
 .shell.standalone #sa-theme { min-width: 36px; display: inline-flex; align-items: center; justify-content: center; }
 .shell.standalone #sa-theme svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 .shell.standalone:not(.can-read) #calc-read, .shell.standalone:not(.can-read) .calc-branches, .shell.standalone:not(.can-read) .calc-read-limit, .shell.standalone:not(.can-read) .calc-source-state, .shell.standalone:not(.can-read) .calc-origins, .shell.standalone:not(.can-read) .calc-apply-read, .shell.standalone #calc-email-open, .shell.standalone #calc-email-form, .shell.standalone .calc-toolbar { display: none !important; }
-/* The key card: what it is for and its state on one line, the key with Connect, then a note and Advanced. */
-.shell.standalone .sa-connect { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); order: 5; }
+/* The key card: the Checkmarx One key and the git tokens side by side, each with what it is for and its state on one line; Advanced below. */
+.shell.standalone .sa-connect { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 22px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); order: 5; }
+.shell.standalone .sa-keybox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; align-content: start; min-width: 0; }
+.shell.standalone .sa-keybox-git { padding-inline-start: 22px; border-inline-start: 1px solid var(--border); }
+.shell.standalone .sa-kick-git { color: #0d7f74; }
+.shell.standalone .sa-git-provider { flex: none; width: auto; margin: 0; padding-top: 6px; padding-bottom: 6px; }
+.shell.standalone #sa-git-status { margin-left: auto; font-size: 12px; font-weight: 600; }
+.shell.standalone .sa-git-list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 22px; }
+.shell.standalone .sa-git-chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 4px 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid color-mix(in srgb, #0d7f74 35%, transparent); background: color-mix(in srgb, #0d7f74 9%, transparent); animation: readfx-pop .35s ease-out; }
+.shell.standalone .sa-git-chip b { font-weight: 600; }
+.shell.standalone .sa-git-chip code { font-size: 11.5px; color: var(--muted); }
+.shell.standalone .sa-git-chip button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 2px 6px; border-radius: 999px; }
+.shell.standalone .sa-git-chip button:hover { color: var(--danger, #c4372f); }
+.shell.standalone .sa-git-list .link { font-size: 12px; }
+@media (max-width: 900px) { .shell.standalone .sa-connect { grid-template-columns: minmax(0, 1fr); } .shell.standalone .sa-keybox-git { padding-inline-start: 0; border-inline-start: 0; padding-top: 10px; border-top: 1px solid var(--border); } }
 .shell.standalone .sa-key-head { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .shell.standalone .sa-kick { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
 .shell.standalone .sa-key-label { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -6997,6 +7083,26 @@ button.gv-sugg:hover:not(:disabled) { border-color: var(--accent); }
                 <p class="hint" id="calc-reports-empty">No reports yet. <strong>Generate projection report</strong> makes one from the customer's triage &amp; remediation and Fusion figures.</p>
               </section>
             </div>
+
+            <!-- While Checkmarx One is read: each project as it comes in, on the right; the figures on the left fill in meanwhile. -->
+            <aside class="calc-readfx" id="calc-readfx" hidden aria-labelledby="calc-readfx-title">
+              <div class="calc-readfx-head">
+                <div><span class="calc-readfx-kick">Live from Checkmarx One</span><h3 id="calc-readfx-title">Reading the projects</h3></div>
+                <button type="button" class="link" id="calc-readfx-hide">Hide</button>
+              </div>
+              <div class="calc-readfx-track" aria-hidden="true"><div class="calc-readfx-fill" id="calc-readfx-fill"></div><span class="calc-readfx-runner flare-icon" id="calc-readfx-runner"></span></div>
+              <div class="calc-readfx-pct"><b id="calc-readfx-pct">0%</b><span id="calc-readfx-eta" aria-live="polite"></span></div>
+              <dl class="calc-readfx-stats">
+                <div><dt>Projects read</dt><dd id="calc-readfx-read">0</dd></div>
+                <div><dt>Lines of code</dt><dd id="calc-readfx-loc">0</dd></div>
+                <div><dt>Scans in the year</dt><dd id="calc-readfx-scans">0</dd></div>
+                <div><dt>Open findings</dt><dd id="calc-readfx-open">0</dd></div>
+              </dl>
+              <div class="calc-readfx-sev" id="calc-readfx-sev"></div>
+              <ol class="calc-readfx-feed" id="calc-readfx-feed"></ol>
+              <p class="calc-readfx-note" id="calc-readfx-note">The figures fill in as the projects come in: try the severities, the period or the scope meanwhile.</p>
+            </aside>
+            <button type="button" class="calc-readfx-pill" id="calc-readfx-pill" hidden><span class="calc-readfx-dot" aria-hidden="true"></span><span id="calc-readfx-pill-text">Reading Checkmarx One</span></button>
 
           </div>
     </main>
@@ -8490,6 +8596,194 @@ return { startHelpTips, setHelpMode, helpMode };
 })();
 
 __m[4] = (() => {
+/**
+ * The "in progress" flare's icons: things that are fast, each drawn for this
+ * app (none is an existing character or brand). A different one shows for
+ * each action. All share a 64×32 box, speed streaks on the left (sp-streak),
+ * and a body that bobs (sp-body); parts animate with sp-spin (wheels, rotors),
+ * sp-flame (exhaust), sp-flap (wings, fins), sp-run (legs), sp-blink (lights).
+ * styles.css animates them, slows them to a stop when the action is done, and
+ * respects reduced motion.
+ */
+
+const streaks = (a = '#b45309', b = '#d97706') => `<g class="sp-streaks" stroke-linecap="round">
+  <line class="sp-streak" x1="2" y1="11" x2="16" y2="11" stroke="${a}" stroke-width="1.6" />
+  <line class="sp-streak b" x1="0" y1="17" x2="18" y2="17" stroke="${b}" stroke-width="2" />
+  <line class="sp-streak c" x1="4" y1="23" x2="15" y2="23" stroke="${a}" stroke-width="1.4" /></g>`;
+
+const svg = (body, streakColours) => `<svg viewBox="0 0 64 32" aria-hidden="true">${streaks(...(streakColours ?? []))}<g class="sp-body">${body}</g></svg>`;
+
+const wheel = (cx, cy, r, tyre = '#111827') =>
+  `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${tyre}" /><g class="sp-spin"><circle cx="${cx}" cy="${cy}" r="${r * 0.55}" fill="#9ca3af" /><path d="M${cx - r * 0.55} ${cy} H${cx + r * 0.55} M${cx} ${cy - r * 0.55} V${cy + r * 0.55}" stroke="#374151" stroke-width="0.9" /></g>`;
+
+const SPEEDSTERS = [
+  {
+    name: 'caped speedster',
+    svg: svg(`<path class="sp-flap" d="M44 13 C36 6 27 5 18 8 C24 11 27 15 22 21 C30 19 37 18 42 17 Z" fill="#ea580c" />
+      <path d="M24 16 L15 15.2 M24 19 L16 20.5" stroke="#4c1d95" stroke-width="3.2" stroke-linecap="round" />
+      <path d="M15.6 15.1 l-2.4 -0.2 M16.6 20.4 l-2.4 0.5" stroke="#111827" stroke-width="3.4" stroke-linecap="round" />
+      <rect x="23" y="12.6" width="21" height="8" rx="4" fill="#6d28d9" /><rect x="23" y="16.4" width="21" height="1.6" fill="#fff" />
+      <path d="M43 14 L56 11.5" stroke="#6d28d9" stroke-width="3.2" stroke-linecap="round" /><circle cx="57.4" cy="11.2" r="2" fill="#f1c27d" />
+      <circle cx="48.4" cy="13.4" r="4.6" fill="#f1c27d" /><path d="M44.2 12.6 C44.8 8.4 50.6 7.6 52.6 10.6 C50.4 10 47.4 10.6 46 13.2 Z" fill="#1f2937" />
+      <path d="M47.6 13.2 h4" stroke="#1f2937" stroke-width="1.6" stroke-linecap="round" />`),
+  },
+  {
+    name: 'rocket',
+    svg: svg(`<path class="sp-flame" d="M24 12.5 L11 16 L24 19.5 Z" fill="#f97316" /><path class="sp-flame b" d="M24 14 L16 16 L24 18 Z" fill="#fde047" />
+      <path d="M28 11.5 L22 5 L33 10.5 Z M28 20.5 L22 27 L33 21.5 Z" fill="#dc2626" />
+      <path d="M23 16 C29 8.5 46 8.5 58 16 C46 23.5 29 23.5 23 16 Z" fill="#e5e7eb" stroke="#6b7280" stroke-width="1" />
+      <circle cx="44" cy="16" r="3.2" fill="#38bdf8" stroke="#1e3a8a" stroke-width="1" /><path d="M52 12.6 C55 14 56.5 15 58 16 C56.5 17 55 18 52 19.4 Z" fill="#dc2626" />`),
+  },
+  {
+    name: 'race car',
+    svg: svg(`<path d="M18 21 L22 14.5 L35 12.5 L46 14 L59 17.5 L59 21 Z" fill="#dc2626" /><rect x="17" y="10.5" width="4" height="5" rx="1" fill="#991b1b" />
+      <path d="M33 13 L41 13 L43.5 15.5 L32 15.5 Z" fill="#1f2937" /><path d="M24 18 H56" stroke="#fde047" stroke-width="1.2" />
+      ${wheel(25, 22, 3.6)}${wheel(52, 22, 3.6)}`),
+  },
+  {
+    name: 'cheetah',
+    svg: svg(`<path class="sp-run" d="M48 19 L58 24" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" /><path class="sp-run b" d="M30 19 L19 24" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M27 16 C21 12 18 14 15 9" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" />
+      <ellipse cx="38" cy="16.5" rx="12" ry="5" fill="#f59e0b" /><circle cx="52" cy="13.5" r="4.4" fill="#f59e0b" /><path d="M50 9.6 l1.2 -2.6 l1.6 2.4 Z" fill="#b45309" />
+      <circle cx="33" cy="15" r="1" fill="#78350f" /><circle cx="38" cy="18" r="1" fill="#78350f" /><circle cx="42" cy="14.5" r="1" fill="#78350f" /><circle cx="29" cy="18" r="0.9" fill="#78350f" />
+      <circle cx="53.6" cy="12.6" r="0.9" fill="#111827" /><path d="M56 14.8 h-2" stroke="#78350f" stroke-width="0.8" />`),
+  },
+  {
+    name: 'jet',
+    svg: svg(`<path class="sp-flame" d="M18 14.6 L10 16 L18 17.4 Z" fill="#f97316" />
+      <path d="M33 15 L24 5 L29.5 5 L42 15 Z M33 17 L24 27 L29.5 27 L42 17 Z" fill="#64748b" /><path d="M20 15.5 L16 9 L21.5 9 L26 15 Z" fill="#475569" />
+      <path d="M18 14.5 L52 14 Q61 16 52 18 L18 17.5 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="0.8" /><path d="M48 14.6 Q53 15 55 16 L48 16 Z" fill="#38bdf8" />`),
+  },
+  {
+    name: 'lightning bolt',
+    svg: svg(`<path class="sp-blink" d="M42 2 L28 18 H38 L32 30 L52 12 H41 L48 2 Z" fill="#facc15" stroke="#a16207" stroke-width="1.2" stroke-linejoin="round" />
+      <path d="M54 6 l3 -2 M56 12 l4 0 M24 24 l-3 2" stroke="#ca8a04" stroke-width="1.2" stroke-linecap="round" />`),
+  },
+  {
+    name: 'comet',
+    svg: svg(`<path d="M50 9.5 L14 13.5 L14 18.5 L50 22.5 Z" fill="#fde68a" opacity="0.8" /><path class="sp-flame" d="M50 12 L24 15 L24 17 L50 20 Z" fill="#f97316" opacity="0.75" />
+      <circle cx="50" cy="16" r="6.4" fill="#fbbf24" stroke="#d97706" stroke-width="1" /><circle cx="48" cy="14" r="1.6" fill="#fef3c7" />`),
+  },
+  {
+    name: 'bullet train',
+    svg: svg(`<path d="M16 22 L16 13 Q16 10.5 19 10.5 L44 10.5 Q57 11.5 61 22 Z" fill="#f8fafc" stroke="#475569" stroke-width="1" />
+      <rect x="20" y="13" width="26" height="3.4" rx="1.4" fill="#1e3a8a" /><path d="M16 19 H58" stroke="#2563eb" stroke-width="1.6" />
+      <path d="M46 13 Q52 13.6 55 17 L46 17 Z" fill="#1e3a8a" /><path d="M14 23.5 H62" stroke="#6b7280" stroke-width="1" />`),
+  },
+  {
+    name: 'motorbike',
+    svg: svg(`${wheel(22, 23, 4.6)}${wheel(48, 23, 4.6)}
+      <path d="M22 23 L31 15 L44 15 L48 23 M31 15 L37 22 L44 15" fill="none" stroke="#dc2626" stroke-width="2" stroke-linejoin="round" />
+      <path d="M33 14 C35 9 40 8 42 11 L44 15" fill="none" stroke="#1f2937" stroke-width="3" stroke-linecap="round" />
+      <circle cx="43" cy="7.5" r="3.4" fill="#dc2626" /><path d="M44 7 h2.8" stroke="#bae6fd" stroke-width="1.4" /><path d="M44 15 L49 12" stroke="#374151" stroke-width="1.6" />`),
+  },
+  {
+    name: 'speedboat',
+    svg: svg(`<path d="M17 18 L58 17 L52 24.5 L22 24.5 Z" fill="#ef4444" /><path d="M20 21 H54" stroke="#fff" stroke-width="1" />
+      <path d="M33 17.6 L38 12 L47 12 L49.5 17.3 Z" fill="#e0f2fe" stroke="#0369a1" stroke-width="0.8" />
+      <path class="sp-flap" d="M14 25 Q18 22 22 25 Q26 28 30 25" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" />`, ['#0284c7', '#38bdf8']),
+  },
+  {
+    name: 'falcon',
+    svg: svg(`<path class="sp-flap" d="M44 15 L30 4 L33 4 L48 14.6 Z" fill="#92400e" /><path class="sp-flap b" d="M44 17 L30 28 L33 28 L48 17.4 Z" fill="#78350f" />
+      <path d="M22 16 L28 13.5 L50 14 Q58 15 60 16.6 Q56 18 50 18 L28 18.5 Z" fill="#b45309" /><path d="M22 16 L16 13 M22 16 L16 19" stroke="#92400e" stroke-width="1.8" stroke-linecap="round" />
+      <circle cx="54" cy="15.2" r="1" fill="#111827" /><path d="M59.6 16.4 L62 17.2 L59.4 17.6 Z" fill="#facc15" />`),
+  },
+  {
+    name: 'paper plane',
+    svg: svg(`<path d="M16 19 L60 8 L36 25 Z" fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.1" stroke-linejoin="round" /><path d="M60 8 L31 20 L36 25" fill="#c7d2fe" stroke="#4f46e5" stroke-width="1.1" stroke-linejoin="round" />`, ['#6366f1', '#818cf8']),
+  },
+  {
+    name: 'sprinter',
+    svg: svg(`<circle cx="49" cy="7.5" r="3.2" fill="#f1c27d" /><path d="M47 10.5 L38 18" stroke="#2563eb" stroke-width="3.6" stroke-linecap="round" />
+      <path class="sp-run" d="M45 12.5 L53 16" stroke="#f1c27d" stroke-width="1.8" stroke-linecap="round" /><path class="sp-run b" d="M44 12 L36 9" stroke="#f1c27d" stroke-width="1.8" stroke-linecap="round" />
+      <path class="sp-run" d="M38 18 L44 22 L42 28" fill="none" stroke="#111827" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      <path class="sp-run b" d="M38 18 L30 22 L24 20" fill="none" stroke="#111827" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />`),
+  },
+  {
+    name: 'roller skate',
+    svg: svg(`<path d="M24 20 L24 8 L36 8 L37 14 Q50 15 54 20 Z" fill="#ec4899" stroke="#9d174d" stroke-width="1" /><path d="M25 11 H35 M25 14 H35" stroke="#fff" stroke-width="1" />
+      <rect x="22" y="20" width="34" height="2.4" rx="1" fill="#6b7280" />${wheel(27, 25.5, 2.8, '#7c3aed')}${wheel(35, 25.5, 2.8, '#7c3aed')}${wheel(43, 25.5, 2.8, '#7c3aed')}${wheel(51, 25.5, 2.8, '#7c3aed')}`),
+  },
+  {
+    name: 'shooting star',
+    svg: svg(`<path d="M44 12 L14 6 M44 16 L12 16 M44 20 L14 26" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity="0.7" />
+      <path class="sp-blink" d="M50 5 L53 12.5 L61 13 L55 18 L57 26 L50 21.6 L43 26 L45 18 L39 13 L47 12.5 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1" stroke-linejoin="round" />`),
+  },
+  {
+    name: 'saucer',
+    svg: svg(`<path d="M34 14 Q42 4 50 14 Z" fill="#bae6fd" stroke="#0369a1" stroke-width="1" /><ellipse cx="42" cy="17" rx="18" ry="5" fill="#64748b" stroke="#334155" stroke-width="1" />
+      <circle class="sp-blink" cx="32" cy="17.5" r="1.3" fill="#fde047" /><circle class="sp-blink b" cx="42" cy="19" r="1.3" fill="#86efac" /><circle class="sp-blink" cx="52" cy="17.5" r="1.3" fill="#f9a8d4" />`, ['#475569', '#94a3b8']),
+  },
+  {
+    name: 'hare',
+    svg: svg(`<path class="sp-run" d="M48 19 L58 23" stroke="#a8a29e" stroke-width="2.4" stroke-linecap="round" /><path class="sp-run b" d="M30 19 L20 24" stroke="#a8a29e" stroke-width="2.6" stroke-linecap="round" />
+      <ellipse cx="38" cy="16.5" rx="11" ry="5" fill="#d6d3d1" /><circle cx="27" cy="15" r="2.4" fill="#fff" />
+      <circle cx="51" cy="13" r="4" fill="#d6d3d1" /><path d="M49 10 L44 2.5 L47.5 2.4 L51.5 9.4 Z M51 9.6 L49 2 L52.4 2.2 L53 9.4 Z" fill="#d6d3d1" stroke="#a8a29e" stroke-width="0.6" />
+      <circle cx="52.6" cy="12.4" r="0.9" fill="#111827" /><circle cx="55" cy="14" r="0.8" fill="#f472b6" />`),
+  },
+  {
+    name: 'arrow',
+    svg: svg(`<path d="M18 16 H55" stroke="#78350f" stroke-width="2" stroke-linecap="round" /><path d="M54 11.5 L62 16 L54 20.5 Z" fill="#6b7280" stroke="#374151" stroke-width="0.8" />
+      <path class="sp-flap" d="M18 16 L24 9.5 L29 9.5 L24 16 Z M18 16 L24 22.5 L29 22.5 L24 16 Z" fill="#dc2626" />`),
+  },
+  {
+    name: 'dolphin',
+    svg: svg(`<path d="M18 20 C26 10 42 8 56 12 C52 14 50 15 49 16 C42 18 32 20 24 22 Z" fill="#38bdf8" stroke="#0369a1" stroke-width="0.9" />
+      <path d="M38 11 L40 5 L44 10.6 Z" fill="#0284c7" /><path class="sp-flap" d="M20 20 L13 15.5 L15 21 L13 26 Z" fill="#0284c7" />
+      <circle cx="51" cy="12.6" r="0.9" fill="#111827" /><path d="M30 25 Q34 23 38 25 Q42 27 46 25" fill="none" stroke="#7dd3fc" stroke-width="1.4" stroke-linecap="round" />`, ['#0284c7', '#38bdf8']),
+  },
+  {
+    name: 'drone',
+    svg: svg(`<rect x="30" y="12" width="20" height="6" rx="2.4" fill="#334155" /><path d="M32 12 V8.5 M48 12 V8.5" stroke="#334155" stroke-width="1.6" />
+      <ellipse class="sp-spin-x" cx="32" cy="8" rx="7" ry="1.2" fill="#94a3b8" /><ellipse class="sp-spin-x b" cx="48" cy="8" rx="7" ry="1.2" fill="#94a3b8" />
+      <circle class="sp-blink" cx="47.5" cy="15" r="1" fill="#ef4444" /><path d="M40 18 V21" stroke="#475569" stroke-width="1" /><rect x="35.5" y="21" width="9" height="6.5" rx="1" fill="#d97706" stroke="#92400e" stroke-width="0.8" />`),
+  },
+  {
+    name: 'cyclist',
+    svg: svg(`${wheel(22, 23, 5)}${wheel(48, 23, 5)}
+      <path d="M22 23 L30 15 L44 15 L48 23 M30 15 L35 23 L44 15" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linejoin="round" />
+      <path d="M33 13 L42 9.5" stroke="#f59e0b" stroke-width="3.4" stroke-linecap="round" /><circle cx="45" cy="8" r="2.8" fill="#f1c27d" /><path d="M42.4 6.6 Q45 3.6 48 6" fill="#16a34a" stroke="#16a34a" stroke-width="1.6" />
+      <path class="sp-run" d="M33.5 13.5 L36 19 L34 23" fill="none" stroke="#1f2937" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M42 10 L45 15" stroke="#f1c27d" stroke-width="1.4" stroke-linecap="round" />`),
+  },
+];
+
+let last = -1;
+let order = [];
+
+/** A whole number from 0 to below `n`, from the browser's (or Node's) cryptographic random source. */
+function randomBelow(n) {
+  const limit = Math.floor(0x100000000 / n) * n; // no modulo bias
+  const word = new Uint32Array(1);
+  do globalThis.crypto.getRandomValues(word);
+  while (word[0] >= limit);
+  return word[0] % n;
+}
+
+/** `list` in a uniformly random order (Fisher–Yates). */
+function shuffled(list) {
+  const out = [...list];
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = randomBelow(i + 1);
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/** A different one each time: every icon once, in a shuffled order, then shuffle again (never the same twice in a row). */
+function nextSpeedster() {
+  if (!order.length) {
+    order = shuffled(SPEEDSTERS.map((_, i) => i));
+    if (order[0] === last && order.length > 1) order.push(order.shift());
+  }
+  last = order.shift();
+  return SPEEDSTERS[last];
+}
+
+return { SPEEDSTERS, shuffled, nextSpeedster };
+})();
+
+__m[5] = (() => {
 // Cx Credits Calculator: the arithmetic, shared by the page (public/calculator/page.js), the
 // report it downloads (report.js), the server (src/projections.js) and the tests.
 //
@@ -9746,14 +10040,14 @@ function overallImpact(tr, fusion) {
 return { SEVERITIES, DEFAULT_TR, LOOKBACKS, UNIT_LOC, DEFAULT_READ_PROJECTS, MAX_PROJECTS, wholeNumber, amount, readLimit, seriesRows, analyse, trCost, resolveSelected, aheadSettings, aheadMonths, trProjection, backlogForecast, severityForecast, planForecast, severityPlan, weeklyTrend, FREQUENCIES, CRITICALITIES, COMBINE, frequencyOf, suggestedScans, unitsOf, linesOf, CHECKMARX_MODELS, modelsNamed, fusionSettings, allocate, fusionEstimate, CLOC_LEFT_OUT, MAX_CLOC_LANGUAGES, NEW_CUSTOMER_SCANS, clocName, parseCloc, clocLines, newCustomerSettings, fusionSourceOf, changeFrequencyOf, newCustomerEstimate, MAX_CLOC_FUSION_BYTES, parseClocFusionReport, fusionTotal, BUNDLE_CREDITS, MAX_EXTRA_PERCENT, totalsSettings, creditSummary, cleanScope, cleanOrigins, byOrigins, originCounts, topSettings, settingChanges, PROJECT_SORT_KEYS, sortProjects, scopeActive, openFindings, globMatch, inScope, IMPACT_DEFAULTS, HOURS_A_YEAR, impactSettings, trImpact, fusionImpact, overallImpact };
 })();
 
-__m[5] = (() => {
+__m[6] = (() => {
 // Cx Credits Calculator: the charts, as SVG text, for the page and for the report it downloads.
 // Colours come as CSS values (`var(--text)` on the page, the report's own theme in the report). Thin
 // lines, a light grid, a dot only where a line ends; pointing anywhere on a line says the value
 // (each point has a wide invisible target with a <title>). The report passes its translator as
 // `palette.t` (the page translates the legends where they are shown).
 
-const { SEVERITIES } = __m[4];
+const { SEVERITIES } = __m[5];
 
 const same = (text) => text;
 /** The wording in the reader's language: `{0}` in `text` is `args[0]`. */
@@ -9985,12 +10279,12 @@ function barChart(bars, { palette = PAGE_PALETTE, suffix = '', colour = null, ti
 return { SEVERITY_COLOURS, PAGE_PALETTE, monthLabel, weekLabel, lineChart, backlogTrendChart, ratesChart, debtFixChart, forecastChart, severityCharts, severityChart, donutChart, barChart };
 })();
 
-__m[6] = (() => {
+__m[7] = (() => {
 // Cx Credits Calculator: how every number is worked out, with the figures in, for the "?" on the
 // page, the report's "How each number is calculated" and the PDF's appendix. One source, so the
 // three always say the same thing. `L` is the report's wording (`w` escapes, `num` formats).
 
-const { FREQUENCIES, HOURS_A_YEAR, SEVERITIES, aheadMonths, creditSummary, fusionTotal } = __m[4];
+const { FREQUENCIES, HOURS_A_YEAR, SEVERITIES, aheadMonths, creditSummary, fusionTotal } = __m[5];
 
 const FREQUENCY_LABEL = Object.fromEntries(FREQUENCIES.map((f) => [f.id, f.label]));
 
@@ -10246,7 +10540,7 @@ function sectionHtml(section) {
 return { trSections, fusionSection, fusionNewSection, totalSection, moneyText, impactSections, fusionImpactSections, overallImpactSection, allSections, sectionHtml };
 })();
 
-__m[7] = (() => {
+__m[8] = (() => {
 // Cx Credits Calculator: the projection report, one self-contained HTML file (nothing loaded from
 // anywhere), from the data a generated report keeps. Prints to PDF from the browser. Made with its
 // levers (`live`), it carries its figures and one script (report-live.js and what it imports, allowed
@@ -10260,9 +10554,9 @@ __m[7] = (() => {
 
 const { describeEngines } = __m[0];
 const { NEXTGEN_ACCENTS, lookPalette, reportLook } = __m[1];
-const { FREQUENCIES, SEVERITIES, cleanScope, creditSummary, fusionTotal } = __m[4];
-const { allSections, moneyText, sectionHtml } = __m[6];
-const { SEVERITY_COLOURS, backlogTrendChart, debtFixChart, forecastChart, monthLabel, ratesChart, severityChart, severityCharts } = __m[5];
+const { FREQUENCIES, SEVERITIES, cleanScope, creditSummary, fusionTotal } = __m[5];
+const { allSections, moneyText, sectionHtml } = __m[7];
+const { SEVERITY_COLOURS, backlogTrendChart, debtFixChart, forecastChart, monthLabel, ratesChart, severityChart, severityCharts } = __m[6];
 
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const FROM = { default: 'Default', frequency: 'Scan frequency', criticality: 'Criticality', project: 'Set for the project' };
@@ -11017,7 +11311,7 @@ ${live ? `<script type="application/json" id="cx-live">${liveJson({ base: live.b
 return { reportFileName, wording, trFigures, scopeLines, falsePositiveLine, assumptionItems, countedFusion, reportMain, liveCspMeta, buildReport };
 })();
 
-__m[8] = (() => {
+__m[9] = (() => {
 // Cx Credits Calculator: the projection as a PDF to present, made in the browser from the data a
 // generated report keeps. Page 1: triage & remediation, the backlog and the findings still to
 // come. Page 2: Checkmarx Fusion. Page 3: the credits needed overall. Page 4: the impact. Only when
@@ -11027,10 +11321,10 @@ __m[8] = (() => {
 // Each page is drawn on a canvas (so every language's script and direction is drawn by the
 // browser), kept as a JPEG, and the three are written into a PDF here: no library, nothing sent.
 
-const { FREQUENCIES, HOURS_A_YEAR, SEVERITIES, aheadMonths, creditSummary, fusionTotal } = __m[4];
-const { allSections, moneyText } = __m[6];
-const { forecastChart } = __m[5];
-const { assumptionItems, countedFusion, falsePositiveLine, reportFileName, scopeLines, trFigures, wording } = __m[7];
+const { FREQUENCIES, HOURS_A_YEAR, SEVERITIES, aheadMonths, creditSummary, fusionTotal } = __m[5];
+const { allSections, moneyText } = __m[7];
+const { forecastChart } = __m[6];
+const { assumptionItems, countedFusion, falsePositiveLine, reportFileName, scopeLines, trFigures, wording } = __m[8];
 const { NEXTGEN_ACCENTS, lookPalette, reportLook } = __m[1];
 
 /** The page size in PDF points (16:9, as a presentation) and the drawing size in pixels. */
@@ -11647,7 +11941,7 @@ function pdfFromJpegs(pages, { title = '', page = PAGE } = {}) {
 return { PAGE, slidesFileName, slideContent, numberContents, drawSlides, slidesTitle, slidesPdf, pdfFromJpegs };
 })();
 
-__m[9] = (() => {
+__m[10] = (() => {
 // Cx Credits Calculator: the levers a projection report carries, so the customer can try other numbers
 // in the file itself, with no connection to Checkmarx One. `leverInputs` is what the report keeps when
 // it is made (page.js); `leverData` works the report's figures out again from it, with the same model
@@ -11657,7 +11951,7 @@ __m[9] = (() => {
 // projects that work out alike (scan frequency, criticality, what was set for them) are kept as one
 // row of their count and their 10K units, which gives the same credits as the projects one by one.
 
-const { SEVERITIES, creditSummary, fusionEstimate, fusionImpact, impactSettings, linesOf, overallImpact, planForecast, severityPlan, trImpact, trProjection, unitsOf, wholeNumber } = __m[4];
+const { SEVERITIES, creditSummary, fusionEstimate, fusionImpact, impactSettings, linesOf, overallImpact, planForecast, severityPlan, trImpact, trProjection, unitsOf, wholeNumber } = __m[5];
 
 const debtFigures = (x) => ({ current: x.current, prior: x.prior, fixed: x.fixed, arrivals: x.arrivals, debtRate: x.debtRate, fixRate: x.fixRate, fixedMonthly: x.fixedMonthly, netMonthly: x.netMonthly, addedPct: x.addedPct, fixedPct: x.fixedPct });
 
@@ -11839,12 +12133,12 @@ function changePeriod(inputs, months) {
 return { recentRates, trReport, fusionReport, foldProjects, leverInputs, leverData, changePeriod };
 })();
 
-__m[10] = (() => {
+__m[11] = (() => {
 // The Cx Credits Calculator's customers and reports, checked the same way wherever they are kept: on the
 // server (src/projections.js, in the data folder) and in the standalone calculator (in the browser). No
 // Node or browser APIs beyond crypto and TextEncoder, so both can use it.
 
-const { CRITICALITIES, DEFAULT_TR, FREQUENCIES, LOOKBACKS, MAX_CLOC_LANGUAGES, MAX_PROJECTS, aheadSettings, cleanOrigins, cleanScope, creditSummary, fusionSettings, fusionTotal, impactSettings, modelsNamed, newCustomerSettings, totalsSettings, wholeNumber } = __m[4];
+const { CRITICALITIES, DEFAULT_TR, FREQUENCIES, LOOKBACKS, MAX_CLOC_LANGUAGES, MAX_PROJECTS, aheadSettings, cleanOrigins, cleanScope, creditSummary, fusionSettings, fusionTotal, impactSettings, modelsNamed, newCustomerSettings, totalsSettings, wholeNumber } = __m[5];
 const { DEFAULT_ENGINES, cleanEngines } = __m[0];
 
 const MAX_PROFILES = 200;
@@ -12213,22 +12507,23 @@ const reportMeta = ({ data, ...meta }) => meta;
 return { MAX_PROFILES, MAX_PROFILE_BYTES, MAX_REPORTS, MAX_REPORT_BYTES, newId, fail, text, finite, isoDay, iso, cleanTr, cleanFusion, cleanGitFrom, cleanActivity, cleanFusionNew, migrate, summary, cleanReportData, newProfile, restoreProfile, patchProfile, newReport, reportMeta };
 })();
 
-__m[11] = (() => {
+__m[12] = (() => {
 // Cx Credits Calculator (#/calculator): customers, each with a triage & remediation projection
 // (two Checkmarx One exports and a plan per severity) and a Fusion projection (how many Fusion
 // scans each project needs, and what they cost), and the projection reports made from them.
 // Saved on the server as you go (src/projections.js). The arithmetic is model.js; the charts
 // charts.js; the downloaded report report.js.
 
-const { BUNDLE_CREDITS, CRITICALITIES, DEFAULT_TR, FREQUENCIES, LOOKBACKS, MAX_PROJECTS, SEVERITIES, aheadSettings, amount, analyse, byOrigins, cleanScope, creditSummary, fusionEstimate, fusionImpact, fusionSettings, fusionTotal, impactSettings, inScope, newCustomerEstimate, originCounts, overallImpact, parseCloc, parseClocFusionReport, MAX_CLOC_FUSION_BYTES, sortProjects, planForecast, readLimit, scopeActive, seriesRows, settingChanges, severityPlan, suggestedScans, topSettings, totalsSettings, trImpact, trProjection, weeklyTrend, wholeNumber } = __m[4];
-const { PAGE_PALETTE, SEVERITY_COLOURS, barChart, debtFixChart, donutChart, forecastChart, lineChart, severityCharts } = __m[5];
-const { buildReport, reportFileName, wording } = __m[7];
-const { leverData, leverInputs, recentRates } = __m[9];
-const { slidesFileName, slidesPdf } = __m[8];
-const { allSections, fusionImpactSections, impactSections, sectionHtml } = __m[6];
-const { cleanFusionNew } = __m[10];
+const { BUNDLE_CREDITS, CRITICALITIES, DEFAULT_TR, FREQUENCIES, LOOKBACKS, MAX_PROJECTS, SEVERITIES, aheadSettings, amount, analyse, byOrigins, cleanScope, creditSummary, fusionEstimate, fusionImpact, fusionSettings, fusionTotal, impactSettings, inScope, newCustomerEstimate, originCounts, overallImpact, parseCloc, parseClocFusionReport, MAX_CLOC_FUSION_BYTES, sortProjects, planForecast, readLimit, scopeActive, seriesRows, settingChanges, severityPlan, suggestedScans, topSettings, totalsSettings, trImpact, trProjection, weeklyTrend, wholeNumber } = __m[5];
+const { PAGE_PALETTE, SEVERITY_COLOURS, barChart, debtFixChart, donutChart, forecastChart, lineChart, severityCharts } = __m[6];
+const { buildReport, reportFileName, wording } = __m[8];
+const { leverData, leverInputs, recentRates } = __m[10];
+const { slidesFileName, slidesPdf } = __m[9];
+const { allSections, fusionImpactSections, impactSections, sectionHtml } = __m[7];
+const { cleanFusionNew } = __m[11];
 const { RTL, currentLanguage, t } = __m[2];
 const { DEFAULT_ENGINES, ENGINES, cleanEngines } = __m[0];
+const { nextSpeedster } = __m[4];
 
 const OPEN_KEY = 'mz-calc-customer';
 const FREQ_LABEL = Object.fromEntries(FREQUENCIES.map((f) => [f.id, f.label]));
@@ -12354,6 +12649,12 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
   }
 
   function show(customer) {
+    // Leaving a customer that was filling in as the projects came in: it keeps what it had, and gets the read when it ends only if still open.
+    if (reading.stream && c.open?.id === reading.customer && customer?.id !== reading.customer) {
+      leaveStream();
+      reading.stream = false;
+      if (c.pending?.id === reading.customer) flush();
+    }
     c.open = customer;
     c.remainingCredits = null;
     renderCustomers();
@@ -12427,6 +12728,8 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     while (c.saving) await c.saving;
     const job = c.pending;
     if (!job) return;
+    // A customer filling in as Checkmarx One is read is saved when the read ends, with every project (settle).
+    if (reading.stream && job.id === reading.customer) return void saved('Saved when the read is done', null, 'muted');
     c.pending = null;
     const run = (async () => {
       try {
@@ -13628,6 +13931,33 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
       ? `<div class="calc-git-tokens-head">${git.tokens.length === 1 ? '1 token' : `${num(git.tokens.length)} tokens`}: each one's organisations are found and counted; a repository two can see is counted once.</div>` +
         git.tokens.map((x, i) => `<div class="calc-git-token-row"><span class="calc-fh-pill ok">${esc(PROVIDER_NAMES[x.provider] ?? x.provider)}</span><code translate="no">${esc(masked(x.token))}</code><span translate="no">${esc(hostOf(x))}</span><button type="button" class="link" data-token-remove="${i}">Remove</button></div>`).join('')
       : '';
+    git.onTokens?.();
+  }
+  /**
+   * A token given beside the API key (the standalone calculator's head): added to the same list, ready on
+   * Fusion · from Git. The platform from how the token starts, else the one picked. Returns the platform, or null.
+   */
+  function addGitToken({ provider = '', address = '', token = '' } = {}) {
+    const value = String(token).trim();
+    if (!value) return null;
+    const kind = detectProvider(value) ?? (PROVIDER_NAMES[provider] ? provider : null);
+    if (!kind) return null;
+    const entry = { provider: kind, address: String(address).trim(), token: value };
+    if (!git.tokens.some((x) => x.token === entry.token && x.provider === entry.provider && x.address === entry.address)) git.tokens.push(entry);
+    git.chosen = new Set([...(git.chosen ?? []), 'token']);
+    const box = $('calc-git-hosts').querySelector('input[value="token"]');
+    renderTokens();
+    if (box) {
+      box.checked = true;
+      hostSwitched();
+    }
+    return kind;
+  }
+  const gitTokens = () => git.tokens.map((x) => ({ provider: x.provider, platform: PROVIDER_NAMES[x.provider] ?? x.provider, masked: masked(x.token), host: hostOf(x) }));
+  function removeGitToken(i) {
+    git.tokens.splice(Number(i), 1);
+    renderTokens();
+    if ($('calc-git-hosts').querySelector('input[value="token"]')) hostSwitched();
   }
   $('calc-git-token-add').addEventListener('click', () => {
     if (!addTypedToken()) return setStatus('calc-git-status', 'Paste the token first (1 · Where the code is).', 'error');
@@ -13636,9 +13966,7 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
   $('calc-git-tokens').addEventListener('click', (event) => {
     const i = event.target.closest('[data-token-remove]')?.dataset.tokenRemove;
     if (i === undefined) return;
-    git.tokens.splice(Number(i), 1);
-    renderTokens();
-    hostSwitched();
+    removeGitToken(i);
   });
   /** The tokens typed, as the server takes them (each sent only with the requests for its own host, never kept). */
   function typedTokens() {
@@ -14463,6 +14791,11 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     renderRules();
     renderProjects();
     const fromTenant = tr()?.totals?.meta?.source === 'cxone';
+    // Filling in as the projects come in: Fusion follows the scope now, the backlog's weeks when the read is done (applyRead).
+    if (reading.stream && c.open.id === reading.customer) {
+      if (!quiet && narrowed()) setStatus('calc-scope-status', 'Fusion follows the scope now; triage & remediation does when the read is done.', 'muted');
+      return renderTr();
+    }
     if (!fromTenant) {
       if (!quiet && narrowed()) setStatus('calc-scope-status', 'Fusion follows the scope. Triage & remediation comes from the two exports, which cover every project.', 'warn');
       return renderTr();
@@ -14698,15 +15031,23 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
   // ---- Reading Checkmarx One: both tabs come from the tenant's projects and their scans ----------
 
   // `branches`: what the read running takes ('all' or 'primary'), so Every branch is not shown as waiting meanwhile.
-  const reading = { customer: null, timer: null, auto: false, waiters: [], branches: null };
+  // `stream`: a customer with nothing read yet gets the figures as the projects come in (`rows`: those in so far);
+  // `before`: what it had (projects added by hand), put back if it is left before the read ends.
+  const reading = { customer: null, timer: null, auto: false, waiters: [], branches: null, stream: false, rows: [], before: null };
   /** Resolves when the read running now has finished (true when it gave data). */
   const readFinished = () => new Promise((resolve) => reading.waiters.push(resolve));
   const settle = (ok) => {
     reading.branches = null;
     reading.startedAt = null;
     reading.lastPct = 0;
+    const streamed = reading.stream;
+    reading.stream = false;
+    reading.rows = [];
+    reading.before = null;
     for (const resolve of reading.waiters.splice(0)) resolve(ok);
     renderPending();
+    // What was changed while it streamed waited for the read: saved now.
+    if (streamed && c.pending) flush();
   };
 
   function readProgress(job) {
@@ -14715,8 +15056,11 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     bar.hidden = !running;
     $('calc-read').disabled = running || !c.open;
     if (!running) return;
-    const part = job.total ? job.done / job.total : 0;
-    const pct = Math.round(job.step === 'summaries' ? 60 + part * 40 : part * 60);
+    // Two things side by side: the projects read (their scans and lines of code), and those with their findings in.
+    const total = job.total || 0;
+    const read = job.read ?? (job.step === 'projects' ? job.done : total);
+    const found = job.found ?? (job.step === 'summaries' ? job.done : 0);
+    const pct = total ? Math.min(99, Math.round(((read * 0.6 + found * 0.4) / total) * 100)) : 0;
     bar.value = pct;
     // How long is left, from the pace so far (shown once there is a pace to go by).
     const now = Date.now();
@@ -14724,12 +15068,207 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     reading.lastPct = pct;
     const spent = (now - reading.startedAt) / 1000;
     const left = pct >= 3 && spent > 5 ? (spent * (100 - pct)) / pct : null;
-    const eta = left === null ? '' : left < 90 ? ' · under 2 minutes left' : ` · about ${num(Math.round(left / 60))} minutes left`;
-    const lock = ' The settings unlock and the figures fill in when the read is done.';
-    if (job.step === 'summaries') setStatus('calc-read-note', `Reading from Checkmarx One: ${pct}% — the findings of each scan, ${num(job.done)} of ${num(job.total)}${eta}.${lock}`, 'reading');
-    else if (job.total) setStatus('calc-read-note', `Reading from Checkmarx One: ${pct}% — projects and their scans, ${num(job.done)} of ${num(job.total)}${eta}.${lock}`, 'reading');
-    else setStatus('calc-read-note', `Reading from Checkmarx One: the list of projects…${lock}`, 'reading');
+    const eta = left === null ? '' : left < 90 ? 'under 2 minutes left' : `about ${num(Math.round(left / 60))} minutes left`;
+    const fill = reading.stream ? ' The figures fill in as the projects come in.' : ' The figures change when the read is done.';
+    if (total) setStatus('calc-read-note', `Reading from Checkmarx One: ${pct}% — ${num(read)} of ${num(total)} projects read, ${num(found)} with their findings in${eta ? ` · ${eta}` : ''}.${fill}`, 'reading');
+    else setStatus('calc-read-note', `Reading from Checkmarx One: the list of projects…${fill}`, 'reading');
+    readFx({ job, pct, eta, read, found, total });
   }
+
+  // ---- The read panel, on the right: each project as it is read, the totals climbing, the severities in so far ----
+  const fx = { queue: [], drip: null, seen: 0, hidden: false, open: false, shown: {}, done: null, runner: null, feed: 0 };
+  const FX_FEED = 8;
+  const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  /** A figure in the panel that climbs to its new value. */
+  function countTo(id, value, format = num) {
+    const el = $(id);
+    const from = fx.shown[id] ?? 0;
+    fx.shown[id] = value;
+    if (from === value || reduceMotion()) return void (el.textContent = format(value));
+    const start = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - start) / 700);
+      el.textContent = format(Math.round(from + (value - from) * (1 - (1 - k) ** 3)));
+      if (k < 1 && fx.shown[id] === value) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    el.classList.remove('calc-readfx-bump');
+    void el.offsetWidth;
+    el.classList.add('calc-readfx-bump');
+  }
+  const short = (n) => (n >= 1e6 ? `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M` : n >= 1e4 ? `${Math.round(n / 1e3)}K` : num(n));
+  function fxShow(open) {
+    fx.open = open;
+    $('calc-readfx').hidden = !open;
+    $('calc-readfx-pill').hidden = open || !(reading.timer || fx.done);
+    document.body.classList.toggle('calc-readfx-on', open);
+    if (open) fxPlace();
+  }
+  /** Level with the top of the calculator (below the head and the keys), then held near the top of the window as the page scrolls. */
+  function fxPlace() {
+    const panel = $('calc-readfx');
+    if (panel.hidden) return;
+    if (window.matchMedia?.('(max-width: 760px)').matches) return void (panel.style.top = panel.style.maxHeight = '');
+    const top = Math.max(16, Math.round($('page-calculator').getBoundingClientRect().top));
+    panel.style.top = `${top}px`;
+    panel.style.maxHeight = `calc(100vh - ${top + 20}px)`;
+  }
+  window.addEventListener('scroll', () => fx.open && fxPlace(), { passive: true });
+  window.addEventListener('resize', () => fx.open && fxPlace());
+  function fxStart() {
+    clearTimeout(fx.closer);
+    Object.assign(fx, { queue: [], seen: 0, shown: {}, done: null, feed: 0 });
+    $('calc-readfx').classList.remove('done', 'failed');
+    $('calc-readfx-title').textContent = 'Reading the projects';
+    $('calc-readfx-feed').replaceChildren();
+    $('calc-readfx-sev').replaceChildren();
+    for (const id of ['calc-readfx-read', 'calc-readfx-loc', 'calc-readfx-scans', 'calc-readfx-open']) $(id).textContent = '0';
+    $('calc-readfx-fill').style.width = '0%';
+    // A different fast thing each read, as on CxMissionZero's progress flares.
+    const s = nextSpeedster();
+    const runner = $('calc-readfx-runner');
+    runner.innerHTML = s.svg;
+    runner.title = s.name;
+    runner.classList.remove('settling');
+    runner.style.insetInlineStart = '0%';
+    $('calc-readfx-note').textContent = reading.stream ? 'The figures fill in as the projects come in: try the severities, the period or the scope meanwhile.' : 'The figures change when the read is done; until then they are the last read’s.';
+    fxShow(!fx.hidden);
+  }
+  function readFx({ job, pct, eta, read, total }) {
+    if (!fx.open && $('calc-readfx-pill').hidden && !fx.hidden) fxStart();
+    $('calc-readfx-pill-text').textContent = total ? `Reading Checkmarx One · ${pct}%` : 'Reading Checkmarx One';
+    $('calc-readfx-pct').textContent = `${pct}%`;
+    $('calc-readfx-eta').textContent = total ? `${num(read)} of ${num(total)} projects${eta ? ` · ${eta}` : ''}` : 'Listing the projects…';
+    $('calc-readfx-fill').style.width = `${pct}%`;
+    $('calc-readfx-runner').style.insetInlineStart = `calc(${pct}% - ${(pct / 100) * 64}px)`;
+    const live = job.live;
+    if (!live) return;
+    countTo('calc-readfx-read', read);
+    countTo('calc-readfx-loc', live.loc ?? 0, short);
+    countTo('calc-readfx-scans', live.scans ?? 0);
+    const open = live.open ?? {};
+    countTo('calc-readfx-open', SEVERITIES.reduce((n, s) => n + (open[s] ?? 0), 0));
+    renderFxSeverities(open);
+    // Each project read since the last look, dripped in one after another over the next second and a half.
+    const fresh = (live.recent ?? []).filter((x) => x.n > fx.seen);
+    if (fresh.length) fx.seen = fresh[fresh.length - 1].n;
+    fx.queue.push(...fresh.slice(-FX_FEED * 3));
+    if (fx.queue.length > FX_FEED * 3) fx.queue.splice(0, fx.queue.length - FX_FEED * 3);
+    dripFeed();
+  }
+  function renderFxSeverities(open) {
+    const box = $('calc-readfx-sev');
+    const shown = SEVERITIES.filter((s) => s !== 'Info');
+    const max = Math.max(1, ...shown.map((s) => open[s] ?? 0));
+    if (box.children.length !== shown.length) {
+      box.replaceChildren(
+        ...shown.map((s) => {
+          const row = document.createElement('div');
+          row.className = 'calc-readfx-sevrow';
+          row.innerHTML = `<span class="calc-readfx-sevname">${esc(s)}</span><span class="calc-readfx-bar"><i></i></span><b translate="no">0</b>`;
+          row.querySelector('i').style.background = SEVERITY_COLOURS[s];
+          return row;
+        }),
+      );
+    }
+    shown.forEach((s, i) => {
+      const row = box.children[i];
+      row.querySelector('i').style.width = `${Math.round(((open[s] ?? 0) / max) * 100)}%`;
+      row.querySelector('b').textContent = num(open[s] ?? 0);
+    });
+  }
+  function dripFeed() {
+    if (fx.drip || !fx.queue.length) return;
+    const gap = Math.max(60, Math.min(260, 1400 / fx.queue.length));
+    const next = () => {
+      const item = fx.queue.shift();
+      if (!item) return void (fx.drip = null);
+      const li = document.createElement('li');
+      const facts = [item.loc ? `${short(item.loc)} lines` : 'no code counted', `${num(item.scans ?? 0)} scans in the year`, ...(item.criticality ? [`criticality ${item.criticality}`] : [])];
+      li.innerHTML = `<span class="calc-readfx-tick" aria-hidden="true"></span><span class="calc-readfx-what"><b translate="no">${esc(item.name)}</b><small>${esc(facts.join(' · '))}</small></span><span class="calc-readfx-n" translate="no">#${num(item.n)}</span>`;
+      const feed = $('calc-readfx-feed');
+      feed.prepend(li);
+      while (feed.children.length > FX_FEED) feed.lastElementChild.remove();
+      fx.drip = setTimeout(next, gap);
+    };
+    next();
+  }
+  /** The read ended: the runner glides to a stop and the panel says what was read, then folds away. */
+  function fxEnd(ok, text) {
+    if (!fx.open && $('calc-readfx-pill').hidden) return;
+    fx.done = ok ? 'done' : 'failed';
+    clearTimeout(fx.drip);
+    fx.drip = null;
+    const panel = $('calc-readfx');
+    panel.classList.add(ok ? 'done' : 'failed');
+    $('calc-readfx-title').textContent = text;
+    if (ok) {
+      $('calc-readfx-pct').textContent = '100%';
+      $('calc-readfx-fill').style.width = '100%';
+      $('calc-readfx-runner').style.insetInlineStart = 'calc(100% - 64px)';
+      const runner = $('calc-readfx-runner');
+      runner.classList.add('settling');
+      // It glides to a stop, then the tick pops in (as the progress flares do).
+      setTimeout(() => {
+        runner.classList.remove('settling');
+        runner.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle class="tick-disc" cx="12" cy="12" r="11" fill="#16a34a" /><path class="tick-mark" pathLength="1" d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>';
+      }, reduceMotion() ? 0 : 520);
+      $('calc-readfx-eta').textContent = 'Every figure is from the whole read now.';
+      $('calc-readfx-pill-text').textContent = 'Read from Checkmarx One · done';
+    } else $('calc-readfx-pill-text').textContent = 'Reading Checkmarx One stopped';
+    if (ok) fx.closer = setTimeout(() => { fx.done = null; fxShow(false); }, 6000);
+  }
+  $('calc-readfx-hide').addEventListener('click', () => {
+    fx.hidden = true;
+    fxShow(false);
+  });
+  $('calc-readfx-pill').addEventListener('click', () => {
+    fx.hidden = false;
+    clearTimeout(fx.closer);
+    fxShow(true);
+  });
+
+  /** What has come in so far, put in the customer open (a customer with nothing read yet only): shown, not saved until the read ends. */
+  function applyLive(live) {
+    if (!live) return;
+    // The rows complete since the last look (from where this page had them; a gap is asked for again next time).
+    if (live.rowsFrom === reading.rows.length && live.rows?.length) reading.rows.push(...live.rows);
+    if (!reading.stream || !c.open || c.open.id !== reading.customer) return;
+    const f = fusion();
+    const manual = reading.before?.projects ?? [];
+    f.projects = [...reading.rows.map((p) => ({ ...p, locOverride: null, included: true, scansOverride: null, modelOverride: null })), ...manual];
+    if (live.offer?.models?.length && !reading.modelsIn) {
+      reading.modelsIn = true;
+      mergeModels(f, live.offer.models);
+      c.remainingCredits = live.offer.remainingCredits ?? null;
+    }
+    if (FREQUENCIES.every((q) => f.byFrequency[q.id].scans === null)) for (const q of FREQUENCIES) f.byFrequency[q.id].scans = suggestedScans(q.id, f.periodMonths);
+    // Nothing counted from git or cloc yet: Fusion · Checkmarx One is the estimate in the credits, from the first projects in.
+    if (!reading.basisSet && reading.rows.length && !['cxone', 'both'].includes(basis()) && !(fnew().projects ?? []).length) {
+      reading.basisSet = true;
+      f.optOut = false;
+      fnew().optOut = true;
+      if (c.next) Object.assign(c.next, { fusionOn: true, fusionNewOn: false });
+      saveFusion();
+      saveFnew();
+      renderPending();
+      placeFusion();
+    }
+    if (live.tr?.totals && live.tr?.fixed) {
+      const first = !tr().totals;
+      c.open.tr = { ...tr(), totals: live.tr.totals, fixed: live.tr.fixed };
+      if (first) syncDraft();
+    }
+    // Someone changing a figure meanwhile (a field in use, a slider held) is not redrawn under their hands: the next look shows it.
+    const field = document.activeElement;
+    if (fx.pointer || (field?.closest?.('#page-calculator') && field.matches('input, select, textarea'))) return void (reading.redraw = true);
+    reading.redraw = false;
+    renderTr();
+    renderFusion();
+  }
+  $('page-calculator').addEventListener('pointerdown', () => (fx.pointer = true));
+  document.addEventListener('pointerup', () => (fx.pointer = false));
+  document.addEventListener('pointercancel', () => (fx.pointer = false));
 
   /** The last read, under the button, when nothing else is said there. */
   function renderReadNote() {
@@ -14740,56 +15279,108 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     note.innerHTML = at ? `Last read <time translate="no">${esc(fmtDateTime(at))}</time>` : 'Not read yet';
   }
 
+  /** Follow a read for the customer open: a customer with nothing read yet gets the figures as they come in. */
+  function follow() {
+    reading.customer = c.open.id;
+    reading.stream = !c.open.tr?.totals && !(c.open.fusion?.projects ?? []).some((p) => p.source !== 'manual');
+    reading.rows = [];
+    reading.modelsIn = false;
+    reading.basisSet = false;
+    reading.before = reading.stream ? { projects: (c.open.fusion?.projects ?? []).filter((p) => p.source === 'manual'), tr: c.open.tr } : null;
+    fxStart();
+  }
+
   /** Start a read (or follow the one running in this tenant), then put what it found in the customer open. */
   async function readCxOne({ auto = false, branches = next().allBranches ? 'all' : 'primary' } = {}) {
-    if (!c.open || reading.timer || offline()) return;
-    reading.customer = c.open.id;
+    if (!c.open || reading.timer || reading.starting || offline()) return;
+    // One read followed at a time: a second start meanwhile (Connect and the page opening at once) is left out.
+    reading.starting = true;
     reading.auto = auto;
     reading.branches = branches;
+    follow();
     setStatus('calc-read-note', 'Reading the projects…', 'muted');
     try {
       // One branch per project (its primary branch) unless "Every branch" is ticked.
       readProgress(await api('/api/projections/read', { method: 'POST', body: JSON.stringify({ branches, maxProjects: readLimit(scope().maxProjects) }), quiet: true }));
-      poll();
+      reading.starting = false;
+      poll(400);
     } catch (error) {
+      reading.starting = false;
       readProgress(null);
+      leaveStream();
       settle(false);
+      fxEnd(false, 'Checkmarx One could not be read');
       if (handleAuthLoss(error)) return;
-      if (auto && error.status === 409) return setStatus('calc-read-note', 'Not connected to Checkmarx One: connect it under Settings, or use the two exports.', 'muted');
+      if (auto && error.status === 409) {
+        fx.done = null;
+        fxShow(false);
+        return setStatus('calc-read-note', 'Not connected to Checkmarx One: connect it under Settings, or use the two exports.', 'muted');
+      }
       showError('calc-read-note', error);
     }
   }
 
-  function poll() {
+  /** A streamed customer left (or the read failed before anything came in): what it had before is put back. */
+  function leaveStream() {
+    if (!reading.stream || !reading.before) return;
+    const customer = c.customers.find((x) => x.id === reading.customer) ?? (c.open?.id === reading.customer ? c.open : null);
+    if (!customer) return;
+    if (customer.fusion) customer.fusion.projects = reading.before.projects;
+    customer.tr = reading.before.tr;
+    // What waits to be saved for it keeps its own changes, not the projects shown meanwhile.
+    if (c.pending?.id === customer.id && 'tr' in c.pending.patch) c.pending.patch.tr = reading.before.tr;
+  }
+
+  function poll(wait = 1500) {
+    clearTimeout(reading.timer);
     reading.timer = setTimeout(async () => {
       let job;
       try {
-        job = await api('/api/projections/read', { quiet: true });
+        job = await api(`/api/projections/read?since=${reading.rows.length}`, { quiet: true });
       } catch (error) {
         reading.timer = null;
         readProgress(null);
         settle(false);
+        fxEnd(false, 'Checkmarx One could not be read');
         if (!handleAuthLoss(error)) showError('calc-read-note', error);
         return;
       }
       if (job.state === 'running') {
+        applyLive(job.live);
         readProgress(job);
         return poll();
       }
       reading.timer = null;
       readProgress(null);
       if (job.state === 'failed') {
+        const some = reading.stream && reading.rows.length;
         settle(false);
-        return setStatus('calc-read-note', job.error || 'Checkmarx One could not be read.', 'error');
+        fxEnd(false, 'The read stopped');
+        return setStatus('calc-read-note', `${job.error || 'Checkmarx One could not be read.'}${some ? ` The figures shown are from the ${num(some)} projects read before it stopped: read again for them all.` : ''}`, 'error');
       }
-      const blank = c.open && !c.open.tr?.totals && !c.open.fusion?.projects?.length;
+      const blank = c.open && ((!c.open.tr?.totals && !c.open.fusion?.projects?.length) || (reading.stream && c.open.id === reading.customer));
       if (job.state !== 'done' || !c.open || (c.open.id !== reading.customer && !blank)) {
         settle(false);
+        fxEnd(false, 'Read for another customer');
         return renderReadNote();
       }
+      const count = job.result?.projects?.length ?? 0;
       applyRead(job.result);
       settle(true);
-    }, 1500);
+      fxEnd(true, count === 1 ? '1 project read' : `${num(count)} projects read`);
+    }, wait);
+  }
+
+  /** The tenant's models replace those read before; models typed here stay. A model already here by that name keeps its place (and so the projects set to it) and the credits typed for it. */
+  function mergeModels(f, models) {
+    const named = (n) => String(n ?? '').trim().toLowerCase();
+    const fresh = models.map((t) => {
+      const old = f.models.find((m) => m.id === t.id || named(m.name) === named(t.name));
+      return old ? { ...t, id: old.id, creditsPer10k: t.creditsPer10k ?? old.creditsPer10k, description: t.description || old.description } : t;
+    });
+    const taken = new Set(fresh.map((m) => m.id));
+    f.models = [...fresh, ...f.models.filter((m) => m.source !== 'tenant' && !taken.has(m.id))].slice(0, 20);
+    if (!f.models.some((m) => m.id === f.defaultModel)) f.defaultModel = f.models[0]?.id ?? null;
   }
 
   function applyRead(body) {
@@ -14814,16 +15405,7 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
     if (found.length && c.next?.scope.origins) c.next = topSettings({ ...c.next, scope: { ...c.next.scope, origins: [...c.next.scope.origins, ...found] } });
     // The tenant's models replace those read before; models typed here stay. A model already here by that name
     // keeps its place (and so the projects set to it) and the credits typed for it.
-    if (body.models?.length) {
-      const named = (n) => String(n ?? '').trim().toLowerCase();
-      const fresh = body.models.map((t) => {
-        const old = f.models.find((m) => m.id === t.id || named(m.name) === named(t.name));
-        return old ? { ...t, id: old.id, creditsPer10k: t.creditsPer10k ?? old.creditsPer10k, description: t.description || old.description } : t;
-      });
-      const taken = new Set(fresh.map((m) => m.id));
-      f.models = [...fresh, ...f.models.filter((m) => m.source !== 'tenant' && !taken.has(m.id))].slice(0, 20);
-      if (!f.models.some((m) => m.id === f.defaultModel)) f.defaultModel = f.models[0]?.id ?? null;
-    }
+    if (body.models?.length) mergeModels(f, body.models);
     // No number set for any frequency yet: start from the scans each group runs today.
     if (FREQUENCIES.every((q) => f.byFrequency[q.id].scans === null)) for (const q of FREQUENCIES) f.byFrequency[q.id].scans = suggestedScans(q.id, f.periodMonths);
     c.remainingCredits = body.remainingCredits ?? null;
@@ -14853,17 +15435,19 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
 
   /** A customer with nothing read yet reads Checkmarx One by itself; a read already running is followed. */
   async function autoRead() {
-    if (!c.open || reading.timer || offline()) return;
+    if (!c.open || reading.timer || reading.starting || offline()) return;
     const empty = !c.open.tr?.totals && !c.open.fusion?.projects?.length;
     let job = null;
+    reading.starting = true;
     try {
       job = await api('/api/projections/read', { quiet: true });
     } catch {}
-    if (!c.open) return;
+    reading.starting = false;
+    if (!c.open || reading.timer) return;
     if (job?.state === 'running') {
-      reading.customer = c.open.id;
+      follow();
       readProgress(job);
-      return poll();
+      return poll(400);
     }
     if (!empty) return;
     // A read finished in the last few minutes (for another customer, say) serves this one too.
@@ -15436,14 +16020,20 @@ function initCalculator({ api, $, esc, toast, setStatus, showError, handleAuthLo
   });
 
   gateImpact();
-  return { load, renderOrg, refresh: () => c.open && show(c.open), autoRead };
+  return {
+    load,
+    renderOrg,
+    refresh: () => c.open && show(c.open),
+    autoRead,
+    git: { add: addGitToken, list: gitTokens, remove: removeGitToken, detect: detectProvider, onChange: (fn) => (git.onTokens = fn), open: () => document.querySelector('[data-ptabs] [data-pt="fusion-git"]')?.click() },
+  };
 }
 
 
 return { initCalculator };
 })();
 
-__m[12] = (() => {
+__m[13] = (() => {
 // The Cx Credits Calculator on its own: one HTML file (built by src/standalone-calculator.js) that runs in
 // any browser with no server. It answers the calculator's requests (public/calculator/page.js) itself, with
 // the same rules as the server (profiles.js), and keeps customers and reports in this browser (IndexedDB).
@@ -15451,9 +16041,9 @@ __m[12] = (() => {
 // Checkmarx One → Analytics stand in. Served by the launcher (cx-credits-calculator.mjs, src/calculator-launcher.js)
 // it can: the API key typed at the top goes to the launcher, which reads Checkmarx One as CxMissionZero does.
 
-const { initCalculator } = __m[11];
-const { impactSettings } = __m[4];
-const { MAX_PROFILES, MAX_REPORTS, fail, iso, migrate, newId, newProfile, newReport, patchProfile, reportMeta, restoreProfile, summary, text } = __m[10];
+const { initCalculator } = __m[12];
+const { impactSettings } = __m[5];
+const { MAX_PROFILES, MAX_REPORTS, fail, iso, migrate, newId, newProfile, newReport, patchProfile, reportMeta, restoreProfile, summary, text } = __m[11];
 const { startHelpTips } = __m[3];
 
 const DB_NAME = 'cx-credits-calculator';
@@ -15570,7 +16160,7 @@ function localApi(store, names, launcher = null) {
       return { ok: true };
     }],
     // Reading Checkmarx One: through the launcher when there is one, else the two exports stand in.
-    ['GET', /^\/api\/projections\/read$/, async () => (launcher ? toLauncher(launcher, '/api/projections/read') : { state: 'none' })],
+    ['GET', /^\/api\/projections\/read$/, async (_body, _m, query) => (launcher ? toLauncher(launcher, `/api/projections/read${query.has('since') ? `?since=${encodeURIComponent(query.get('since'))}` : ''}`) : { state: 'none' })],
     ['POST', /^\/api\/projections\/(read|series)$/, async (body, m) => {
       if (launcher) return toLauncher(launcher, `/api/projections/${m[1]}`, { method: 'POST', body: JSON.stringify(body ?? {}) });
       throw fail(409, 'This calculator works from the two Checkmarx One exports: drop them below, or load the sample data.');
@@ -15800,6 +16390,48 @@ function startStandalone({ samples = {} } = {}) {
     });
     // A reload while the launcher is still connected stays connected.
     toLauncher(launcher, '/launcher/status').then(showState, (error) => setStatus('sa-connect-status', error.message, 'error'));
+    startGitTokens();
+  }
+
+  /**
+   * Git tokens beside the API key: each one added to Fusion · from Git's list (held in the page's memory for this
+   * run, never saved or printed), shown here as its platform and its last characters.
+   */
+  function startGitTokens() {
+    const git = calculator.git;
+    const NOTE = '<span class="sa-key-note">Optional: each token’s organisations and repositories are counted on Fusion · from Git. Kept for this run only.</span>';
+    const render = () => {
+      const list = git.list();
+      $('sa-git-list').innerHTML = list.length
+        ? list.map((x, i) => `<span class="sa-git-chip"><b>${esc(x.platform)}</b><code translate="no">${esc(x.masked)}</code><button type="button" data-sa-git-remove="${i}" aria-label="Remove this token" title="Remove">×</button></span>`).join('') + '<button type="button" class="link" id="sa-git-count">Count on Fusion · from Git →</button>'
+        : NOTE;
+      setStatus('sa-git-status', list.length ? `${list.length === 1 ? '1 token' : `${list.length} tokens`} · this run only` : '', list.length ? 'ok' : 'muted');
+    };
+    git.onChange(render);
+    $('sa-git-token').addEventListener('input', () => {
+      const found = git.detect($('sa-git-token').value.trim());
+      if (found) $('sa-git-provider').value = found;
+    });
+    const add = () => {
+      const token = $('sa-git-token').value.trim();
+      if (!token) return setStatus('sa-git-status', 'Paste a git token first.', 'error');
+      const kind = git.add({ provider: $('sa-git-provider').value, address: $('sa-git-address').value, token });
+      if (!kind) return setStatus('sa-git-status', 'Pick the git host for this token.', 'error');
+      $('sa-git-token').value = '';
+      render();
+    };
+    $('sa-git-add').addEventListener('click', add);
+    $('sa-git-token').addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      add();
+    });
+    $('sa-git-list').addEventListener('click', (event) => {
+      const i = event.target.closest('[data-sa-git-remove]')?.dataset.saGitRemove;
+      if (i !== undefined) return git.remove(i);
+      if (event.target.closest('#sa-git-count')) git.open();
+    });
+    render();
   }
 
   startHelpTips();
@@ -15816,7 +16448,7 @@ let __started = false;
 window.__mzStart = () => {
   if (__started) return;
   __started = true;
-  __m[12].startStandalone({ samples: {"Total_Vulnerabilities_by_Severity.xlsx":"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","Fixed_Vulnerabilities_by_Severity.xlsx":"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"} });
+  __m[13].startStandalone({ samples: {"Total_Vulnerabilities_by_Severity.xlsx":"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","Fixed_Vulnerabilities_by_Severity.xlsx":"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"} });
 };
 if (!window.__mzBlocked) window.__mzStart();
 </script>

@@ -10,4 +10,6 @@ The calculator is released with CxMissionZero and carries its version (MZ-xx.xx.
 - **Customer ▾.** One menu lists the customers, with New, Rename and Delete. When there is no customer, one is made straight away and named after Your organisation. **Apply** is always in the settings block.
 - **The report compares, and lists by project.** **Fusion estimates side by side** shows each estimate worked out, with the one in the credits marked (in the PDF too). **Open vulnerabilities by project** adds each project's open findings by severity to the appendix.
 - **Your customers come back.** The calculator opens at the same address every run (127.0.0.1:47317), so the customers saved in the browser come back. A read from Checkmarx One says how far it is and how long is left.
-- **Status.** All 1,031 tests pass, and `npm audit --omit=dev` finds nothing.
+- **Watch the read, and work while it runs.** A panel on the right names each project as Checkmarx One is read, with the totals climbing. Triage & remediation and Fusion · Checkmarx One fill in from the first projects in, so the severities, the period and the prices can be tried before the read ends.
+- **Git tokens beside the API key.** Paste git tokens next to the Checkmarx One key, ready for Fusion · from Git.
+- **Status.** All 1,033 tests pass, and `npm audit --omit=dev` finds nothing.

@@ -22,7 +22,8 @@ Behind TLS inspection, set `NODE_EXTRA_CA_CERTS` to your company's root certific
 ## What it does
 
 - **Customer ▾**: your customers, each saved as you go in the browser, with New, Rename and Delete. **Back up** saves them all as one file; **Restore** brings them back, in that browser or another.
-- **Checkmarx One API key**: paste it and **Connect**; **Read from Checkmarx One** reads every project with its lines of code, criticality, scans and backlog (it shows how far it is, and how long is left).
+- **Checkmarx One API key and Git tokens, side by side**: paste the key and **Connect**; paste one or more read-only git tokens beside it (GitHub, GitLab and Bitbucket are recognised from the token) for Fusion · from Git.
+- **Read from Checkmarx One** reads every project with its lines of code, criticality, scans and backlog. A panel on the right names each project as it is read, with the lines of code, scans and open findings climbing; Triage & remediation and Fusion · Checkmarx One fill in from the first projects in, so you can try the severities, the period and the prices while it reads.
 - **Projection settings**: every branch or the primary one, projects to read, scan origins, projects and applications, the projection period, extra credits and bundles. **Apply** works every figure out again.
 - **Triage & remediation**: the backlog by severity, its trend, the findings still to come, and the credits to triage and remediate them, with the false positives assumed.
 - **Three Fusion tabs, one estimate in the credits**:
