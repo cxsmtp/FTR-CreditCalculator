@@ -1,0 +1,4 @@
+567889d540bdab62bf997d886ae4dec1ffaaa5692e619e1bdab0d2be226e3b88  Cx-Credits-Calculator-macos-arm64.zip
+95286d652961c4e2b34c7c34c28ef218c890473da5fe7c85a52bc426aff77be9  Cx-Credits-Calculator-macos-x64.zip
+f89b8e9379745837aa94e054fe3c134a3d048daa4b333201d0bb73048e2b3180  Cx-Credits-Calculator-windows-x64-app.zip
+11674cb8910d8f6ff37c820bff57882ba6deeb3c6685c7fbb67e61cf622a2966  Cx-Credits-Calculator-windows-x64.zip

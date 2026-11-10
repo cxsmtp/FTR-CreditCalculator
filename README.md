@@ -4,6 +4,20 @@ The credits a Checkmarx One customer needs for **Triage & remediation** of their
 
 This repository holds the calculator **as people download and run it**. It is built from [CxMissionZero](https://github.com/cxsmtp/CxDetectionDateBaseReminder), where the same calculator runs inside the app (Plan → Cx Credits Calculator) from the same code; changes are made there and each release is published here.
 
+**New here? Read [Getting started.pdf](Getting%20started.pdf)** (one page).
+
+## Download
+
+No Node.js on the computer? Pick a zip from [`downloads/`](downloads), unzip it and double-click Start. Nothing is installed and no admin rights are needed.
+
+| Your computer | Ready to run (recommended) | One program |
+| --- | --- | --- |
+| Windows 10/11 | [Cx-Credits-Calculator-windows-x64.zip](downloads/Cx-Credits-Calculator-windows-x64.zip): double-click **Start Cx Credits Calculator.cmd** | [Cx-Credits-Calculator-windows-x64-app.zip](downloads/Cx-Credits-Calculator-windows-x64-app.zip): double-click **Cx Credits Calculator.exe** (not signed by a publisher: the first time, **More info** then **Run anyway**) |
+| Mac with Apple silicon (M1–M4) | [Cx-Credits-Calculator-macos-arm64.zip](downloads/Cx-Credits-Calculator-macos-arm64.zip): right-click **Start Cx Credits Calculator.command**, **Open**, **Open** (first time only) | coming: it has to be signed on a Mac |
+| Intel Mac | [Cx-Credits-Calculator-macos-x64.zip](downloads/Cx-Credits-Calculator-macos-x64.zip): as above | coming |
+
+The ready-to-run zips carry the official Node.js 22.22.0 from nodejs.org, signed by its makers; the one program is Node.js with the calculator inside. Checksums: [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt). Your customers and reports are saved in `cx-credits-calculator-data.json` in the calculator's folder.
+
 | File | What it is |
 | --- | --- |
 | [`cx-credits-calculator.mjs`](cx-credits-calculator.mjs) | The calculator with a small launcher: reads Checkmarx One with an API key and counts code from git, on your computer. Needs Node.js 20 or later. |
