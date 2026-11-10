@@ -12,4 +12,5 @@ The calculator is released with CxMissionZero and carries its version (MZ-xx.xx.
 - **Your customers come back.** The calculator opens at the same address every run (127.0.0.1:47317), so the customers saved in the browser come back. A read from Checkmarx One says how far it is and how long is left.
 - **Watch the read, and work while it runs.** A panel on the right names each project as Checkmarx One is read, with the totals climbing. Triage & remediation and Fusion · Checkmarx One fill in from the first projects in, so the severities, the period and the prices can be tried before the read ends.
 - **Git tokens beside the API key.** Paste git tokens next to the Checkmarx One key, ready for Fusion · from Git.
-- **Status.** All 1,033 tests pass, and `npm audit --omit=dev` finds nothing.
+- **A % for what is still to come.** **New findings counted (%)** sets how many new findings to count: 100% keeps the last months' pace, 50% half, 0% none. Still to come shows the sum, for example 525 a month × 11.9 months × 50%.
+- **Status.** All 1,034 tests pass, and `npm audit --omit=dev` finds nothing.
