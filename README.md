@@ -15,13 +15,13 @@ This repository holds the calculator **as people download and run it**. It is bu
 node cx-credits-calculator.mjs
 ```
 
-It opens the calculator in your browser at `http://127.0.0.1:47317/`, the same address every run, so the customers you saved come back next time. Ctrl+C stops it. Stop the one running before starting it again (a second copy starts on another port and does not show the customers saved before). `--port 8080` picks another port, `--no-open` only prints the address.
+It opens the calculator in your browser at `http://127.0.0.1:47317/`, the same address every run. Your customers and reports are saved to `cx-credits-calculator-data.json` in the folder you ran the command from (made the first time), and loaded from it the next time you start it there: keep that file and your data stays with you. `--data <file>` keeps it somewhere else. Ctrl+C stops it. Stop the one running before starting it again (a second copy starts on another port and does not show the customers saved before). `--port 8080` picks another port, `--no-open` only prints the address.
 
 Behind TLS inspection, set `NODE_EXTRA_CA_CERTS` to your company's root certificate first. Counting code from git uses git 2.31 or later when it is installed, or the platforms' APIs.
 
 ## What it does
 
-- **Customer ▾**: your customers, each saved as you go in the browser, with New, Rename and Delete. **Back up** saves them all as one file; **Restore** brings them back, in that browser or another.
+- **Customer ▾**: your customers, each saved as you go (in the data file beside where you started it, and in the browser), with New, Rename and Delete. **Back up** saves them all as one file; **Restore** brings them back, in that browser or another.
 - **Checkmarx One API key and Git tokens, side by side**: paste the key and **Connect**; paste one or more read-only git tokens beside it (GitHub, GitLab and Bitbucket are recognised from the token) for Fusion · from Git.
 - **Read from Checkmarx One** reads every project with its lines of code, criticality, scans and backlog. A panel on the right names each project as it is read, with the lines of code, scans and open findings climbing; Triage & remediation and Fusion · Checkmarx One fill in from the first projects in, so you can try the severities, the period and the prices while it reads.
 - **Projection settings**: every branch or the primary one, projects to read, scan origins, projects and applications, the projection period, extra credits and bundles. **Apply** works every figure out again.
@@ -33,7 +33,7 @@ Behind TLS inspection, set `NODE_EXTRA_CA_CERTS` to your company's root certific
   
   **Use this instead** picks the estimate counted, so the same code is never counted twice. **Fusion pricing** holds each model's credits per 10K lines of code: each project's lines are rounded up to whole 10K blocks, and a Fusion scan costs its model's credits per block.
 - **Credits required**: Triage & remediation and Fusion together, the extra credits on top, and the bundles.
-- **The report**: one HTML file with the answer first, how it was worked out, the assumptions and every figure; the customer can try other numbers in it. Options: **Include project names and details**, **Fusion estimates side by side**, **Open vulnerabilities by project**. **Download PDF summary** gives the pages to present.
+- **The report**: one HTML file with the answer first, how it was worked out, the assumptions and every figure; the customer can try other numbers in it. Options: **Include project names and details**, **Open vulnerabilities by project**. **Try other numbers** is one line under the total until opened. **Download PDF summary** gives the pages to present. The page, the report and the PDF have the same futuristic look, dark first.
 
 ## Where your data goes
 
