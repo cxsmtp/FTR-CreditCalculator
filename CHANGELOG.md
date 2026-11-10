@@ -13,4 +13,7 @@ The calculator is released with CxMissionZero and carries its version (MZ-xx.xx.
 - **Watch the read, and work while it runs.** A panel on the right names each project as Checkmarx One is read, with the totals climbing. Triage & remediation and Fusion · Checkmarx One fill in from the first projects in, so the severities, the period and the prices can be tried before the read ends.
 - **Git tokens beside the API key.** Paste git tokens next to the Checkmarx One key, ready for Fusion · from Git.
 - **A % for what is still to come.** **New findings counted (%)** sets how many new findings to count: 100% keeps the last months' pace, 50% half, 0% none. Still to come shows the sum, for example 525 a month × 11.9 months × 50%.
+- **No clicks after the keys.** Connect reads Checkmarx One. A git token given beside the key counts everything it can see on Fusion · from Git by itself. Once the read starts, the keys and settings fold into one line with the read's bar, so the credits come first.
+- **The highest Fusion estimate by itself.** The estimate predicting the most credits is in them until you pick another with Use this instead. The three Fusion tabs look alike.
+- **The gap to close, in the report.** The debt rate shows in dark red and the fixing rate in dark green. Gap to close, the points between them, is highlighted in dark red.
 - **Status.** All 1,033 tests pass, and `npm audit --omit=dev` finds nothing.
