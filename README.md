@@ -33,7 +33,7 @@ Behind TLS inspection, set `NODE_EXTRA_CA_CERTS` to your company's root certific
   
   **Use this instead** picks the estimate counted, so the same code is never counted twice. **Fusion pricing** holds each model's credits per 10K lines of code: each project's lines are rounded up to whole 10K blocks, and a Fusion scan costs its model's credits per block.
 - **Credits required**: Triage & remediation and Fusion together, the extra credits on top, and the bundles.
-- **The report**: one HTML file with the answer first, how it was worked out, the assumptions and every figure; the customer can try other numbers in it. Options: **Include project names and details**, **Open vulnerabilities by project**. **Try other numbers** is one line under the total until opened. **Download PDF summary** gives the pages to present. The page, the report and the PDF have the same futuristic look, dark first.
+- **The report**: one HTML file with the answer first, how it was worked out, the assumptions and every figure; the customer can try other numbers in it. Options: **Include project names and details**, **Open vulnerabilities by project**. **Try other numbers** is one line under the total until opened. **Download PDF summary** gives the pages to present. The page and the report have the same futuristic look, dark first; the PDF has white pages under a deep-space band, with the key figures in cyan to violet and a coloured chart.
 
 ## Where your data goes
 
